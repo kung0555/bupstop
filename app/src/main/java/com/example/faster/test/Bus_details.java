@@ -116,6 +116,7 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
         GoogleDirection.withServerKey(serverKey)
                 .from(new LatLng(latFirst, lngFirst))
                 .to(new LatLng(latSearch, lngSearch))
+                .alternativeRoute(true)
                 .language(Language.THAI)
                 .transportMode(TransportMode.TRANSIT)
                 .unit(Unit.METRIC)
