@@ -53,7 +53,6 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
     private static final String TAG = "Bus_details";
-    private TextView mOutputTextView;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     double latSearch;
@@ -62,9 +61,6 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
     double lngFirst;
     private GoogleMap googleMap;
     private String serverKey = "AIzaSyANztP01h4SRxFBJjiKLrxm5uWP1yCQr4E";
-    /*private LatLng camera = new LatLng(latFirst, lngFirst);
-    private LatLng origin = new LatLng(latFirst, lngFirst);
-    private LatLng destination = new LatLng(latSearch, lngSearch);*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +69,6 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
-        mOutputTextView = (TextView) findViewById(R.id.textView30);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -116,13 +111,11 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
     }
 
     public void requestDirection() {
-        LatLng origin = new LatLng(13.778512, 100.507915);
-        LatLng destination = new LatLng(13.787855, 100.490267);
+        //LatLng origin = new LatLng(13.778512, 100.507915);
+        //LatLng destination = new LatLng(13.787855, 100.490267);
         GoogleDirection.withServerKey(serverKey)
-                .from(origin)
-                //.from(new LatLng(latFirst, lngFirst))
+                .from(new LatLng(latFirst, lngFirst))
                 .to(new LatLng(latSearch, lngSearch))
-                //.to(destination)
                 .language(Language.THAI)
                 .transportMode(TransportMode.TRANSIT)
                 .unit(Unit.METRIC)
@@ -157,31 +150,49 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
             TextView tg5 = (TextView) findViewById(R.id.textView6);
             TextView tg6 = (TextView) findViewById(R.id.textView7);
             TextView tg7 = (TextView) findViewById(R.id.textView8);
-            /*String x1 = stepList.get(0).getTransitDetail().getLine().getShortName();
-            String x2 = stepList.get(0).getTransitDetail().getStopNumber();
-            String x3 = stepList.get(0).getTransitDetail().getLine().getName();
-            String x4 = stepList.get(0).getDistance().getText();*/
-
-            String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getShortName();
-            String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getStopNumber();
-            String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getName();
-            String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getDistance().getText();
-            String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getDepartureStopPoint().getName();
-            String x6 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getArrivalStopPoint().getName();
-            //String x7 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().;
 
             /*แสดง สายรถประจำทาง String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getShortName();
             แสดง จำนวนป้ายที่ผ่าน String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getStopNumber();
             แสดง ชื่อป้ายต้นสาย-ปลายสาย String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getName();
             แสดง กม. String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getDistance().getText();
             แสดง ป้ายเริ่มต้น String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getDepartureStopPoint().getName();*/
-            tg1.setText("รถประจำทางสาย " + x1);
-            tg2.setText("ต้องผ่านทั้งหมด " + x2 + " ป้าย");
-            tg3.setText("วิ่งจาก " + x3);
-            tg4.setText("อีก " + x4);
-            tg5.setText("ป้ายรถประจำทางเริ่มต้น " +x5);
-            tg6.setText("ป้ายรถประจำทางปลายทาง "+x6);
+
             //tg7.setText(x7);
+            String z = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTravelMode();
+            String a = "WALKING";
+            boolean gg = z.equals(a);
+            int i = 0;
+            if (gg==true) {
+                i++;
+                String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getShortName();
+                String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getStopNumber();
+                String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getName();
+                String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getDistance().getText();
+                String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getDepartureStopPoint().getName();
+                String x6 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getArrivalStopPoint().getName();
+                tg1.setText("รถประจำทางสาย " + x1);
+                tg2.setText("ต้องผ่านทั้งหมด " + x2 + " ป้าย");
+                tg3.setText("วิ่งจาก " + x3);
+                tg4.setText("อีก " + x4);
+                tg5.setText("ป้ายรถประจำทางเริ่มต้น " +x5);
+                tg6.setText("ป้ายรถประจำทางปลายทาง "+x6);
+
+            }
+            else {
+                String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getShortName();
+                String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getStopNumber();
+                String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getName();
+                String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getDistance().getText();
+                String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getDepartureStopPoint().getName();
+                String x6 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getArrivalStopPoint().getName();
+                tg1.setText("รถประจำทางสาย " + x1);
+                tg2.setText("ต้องผ่านทั้งหมด " + x2 + " ป้าย");
+                tg3.setText("วิ่งจาก " + x3);
+                tg4.setText("อีก " + x4);
+                tg5.setText("ป้ายรถประจำทางเริ่มต้น " +x5);
+                tg6.setText("ป้ายรถประจำทางปลายทาง "+x6);
+
+            }
 
 
         } else if (status.equals(RequestResult.NOT_FOUND)) {
@@ -263,13 +274,11 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        String text = String.format("Latitude: %s, \nLongitude: %s\n\n",
-                location.getLatitude(), location.getLongitude());
-        mOutputTextView.append(text);
-        LatLng pp = new LatLng(location.getLatitude(), location.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(pp)).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-        //Toast.makeText(getApplicationContext(), "ปัจุบัน" + location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-
+        double latStartADouble = location.getLatitude();
+        double lngStartADouble = location.getLongitude();
+        Toast.makeText(getApplicationContext(), "LatChang  "+latStartADouble +"\nlngChang "+lngStartADouble, Toast.LENGTH_SHORT).show();
+        Log.d("14JulV1", "GPS" + latStartADouble);
+        Log.d("14JulV1", "GPS" + lngStartADouble);
     }
 
 

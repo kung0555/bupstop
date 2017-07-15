@@ -28,22 +28,21 @@ public class Inputoffline extends AppCompatActivity {
         return true;
     }
 
-    public void OnclickOK(View view) {
-        Button bt_OK = (Button) findViewById(R.id.button3);
+    public void OnclickOK_off(View view) {
         EditText inputOffline = (EditText) findViewById(R.id.offeditText);
-        String textinput = inputOffline.getText().toString();
-        if (textinput.matches("")) {
+        String inputOff = inputOffline.getText().toString();
+        if (inputOff.matches("")) {
             Toast.makeText(this, "กรุณาใส่ป้ายรถประจำทางเป้าหมาย", Toast.LENGTH_SHORT).show();
         } else {
-            Intent intent = new Intent(Inputoffline.this, Bus_line.class);
+            Intent intent = new Intent(Inputoffline.this, Bus_line_offline.class);
+            intent.putExtra("inputOff", inputOff);
             startActivity(intent);
-            finish();
+
+
         }
     }
 
-    public void OnclickCancel(View view) {
-        Intent intent = new Intent(Inputoffline.this, System.class);
-        startActivity(intent);
+    public void OnclickCancel_off(View view) {
         finish();
     }
 }

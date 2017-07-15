@@ -40,6 +40,12 @@
         <activity
             android:name=".System"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Bus_line_offline"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Bus_details_offline"
+            android:theme="@style/AppTheme.NoActionBar" />
 
 
         <meta-data

@@ -3,6 +3,8 @@ package com.example.faster.test;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -10,11 +12,13 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,7 +30,7 @@ import java.util.List;
 
 public class Bus_line extends ActionBarActivity
         implements GoogleApiClient.ConnectionCallbacks,
-                    GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener {
     double latSearch;
     double lngSearch;
     double latFirst;
@@ -39,9 +43,12 @@ public class Bus_line extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus_line);
+
+        createListView();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //รับค่าจาก activity อื่น
+        //รับค่าจาก activity input
         Intent nameBusStop = getIntent();
         if (nameBusStop != null) {
             inputOnline = nameBusStop.getStringExtra("inputOnline");
@@ -54,6 +61,34 @@ public class Bus_line extends ActionBarActivity
         }
     }
 
+    private void createListView() {
+        ListView listView = (ListView) findViewById(R.id.livShowBus);
+        try {
+            //Connected SQLite for Read All Data
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase("Busstop.db",
+                    MODE_PRIVATE, null);
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM busTABLE", null);
+            cursor.moveToFirst();
+
+            String[] numberBusStrings = new String[cursor.getCount()];
+            String[] detailBusStrings = new String[cursor.getCount()];
+
+            for (int i = 0; i < cursor.getCount(); i += 1) {
+                numberBusStrings[i] = cursor.getString(1);
+                detailBusStrings[i] = cursor.getString(2);
+                Log.d("5JulyV2", "numberBus[" + i + "] ==>" + numberBusStrings[i]);
+                cursor.moveToNext();
+            }
+            BusAdapter busAdapter = new BusAdapter(Bus_line.this, numberBusStrings, detailBusStrings);
+            listView.setAdapter(busAdapter);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }//createListview
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -62,7 +97,6 @@ public class Bus_line extends ActionBarActivity
     }
 
     public void Onclick1(View view) {
-        Button bt_Onclick1 = (Button) findViewById(R.id.buttOnline);
         Geocoder gc = new Geocoder(this);
         List<Address> list = null;
         try {
@@ -74,7 +108,7 @@ public class Bus_line extends ActionBarActivity
         String locality = address.getLocality();
         latSearch = address.getLatitude();
         lngSearch = address.getLongitude();
-        Toast.makeText(this,locality+"ละติจูด"+latSearch+"ลองติจูด"+lngSearch,Toast.LENGTH_LONG).show();
+        Toast.makeText(this, locality + "ละติจูด" + latSearch + "ลองติจูด" + lngSearch, Toast.LENGTH_LONG).show();
         Intent intentt = new Intent(Bus_line.this, Bus_details.class);
         intentt.putExtra("latSearch", latSearch);
         intentt.putExtra("lngSearch", lngSearch);

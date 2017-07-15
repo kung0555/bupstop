@@ -34,24 +34,19 @@ public class Input extends AppCompatActivity {
 
 
     public void OnclickOK(View view) {
-        Button bt_OnclickOK = (Button) findViewById(R.id.button3);
         EditText inputOnline = (EditText)findViewById(R.id.editText);
         String textinput = inputOnline.getText().toString();
         if (textinput.matches("")) {
             Toast.makeText(this, "กรุณาใส่ป้ายรถประจำทางเป้าหมาย", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(Input.this, Bus_line.class);
-            intent.putExtra("inputOnline", inputOnline.getText().toString());
+            intent.putExtra("inputOnline", textinput);
             startActivity(intent);
-            finish();
         }
 
     }
 
     public void OnclickCancel (View view) {
-        Button bt_OnclickCancel = (Button) findViewById(R.id.button4);
-        Intent intentt = new Intent(Input.this, System.class);
-        startActivity(intentt);
         finish();
     }
 
