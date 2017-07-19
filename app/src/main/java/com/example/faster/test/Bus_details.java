@@ -96,9 +96,9 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latFirst, lngFirst), 16));
-        LatLng cc = new LatLng(13.777069, 100.511260);
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cc, 16));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latFirst, lngFirst), 16));
+        //LatLng cc = new LatLng(13.777069, 100.511260);
+        //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cc, 16));
 
     }
 
