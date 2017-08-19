@@ -17,9 +17,9 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     //สร้างเทเบิล
-    private static final String BUSSTOP_TABLE = "create table busstopTABLE (_id integer primary key, " + " X double, Y double, Namebusstop text, buspassing text);";
+    private static final String BUSSTOP_TABLE = "create table busstopTABLE (_id integer primary key, " + " X double, Y double, Namebusstop text);";
     private static final String BUS_TABLE = "create table busTABLE (id_bus integer primary key, " + " bus text , bus_details text);" ;
-    private static final String BUSROUTE_TABLE = "create table busrouteTABLE (id_busroute integer primary key, " + " bus text, Namebusstop text, X double, Y double);";
+    private static final String BUSROUTE_TABLE = "create table busrouteTABLE (id_busroute integer primary key, " + "direction text, bus text,bus_details text, Namebusstop text, X double, Y double);";
 
     public MyOpenHelper(Context context){
         //เรียกไปยังคอนสตรัคเตอร์ของ SQLiteOpenHelper โดยระบุชื่อและเวอร์ชั่นฐานข้อมูล

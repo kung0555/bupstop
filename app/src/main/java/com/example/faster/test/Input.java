@@ -1,6 +1,8 @@
 package com.example.faster.test;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +14,9 @@ import android.speech.RecognizerIntent;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Input extends AppCompatActivity {
     private static final int REQUEST_VOIC_RECOGINITION = 100 ;
@@ -40,9 +44,26 @@ public class Input extends AppCompatActivity {
             Toast.makeText(this, "กรุณาใส่ป้ายรถประจำทางเป้าหมาย", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(Input.this, Bus_line.class);
-            intent.putExtra("inputOnline", textinput);
+            Geocoder gc = new Geocoder(this);
+            List<Address> list = null;
+            try {
+                list = gc.getFromLocationName(textinput, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = list.get(0);
+            String locality = address.getLocality();
+
+            double lat = address.getLatitude();
+            double lng = address.getLongitude();
+            Toast.makeText(this,locality+"ละติจูด"+lat+"ลองติจูด"+lng,Toast.LENGTH_LONG).show();
+            intent.putExtra("LatSearch", lat);
+            intent.putExtra("LngSearch", lng);
             startActivity(intent);
+
+
         }
+
 
     }
 

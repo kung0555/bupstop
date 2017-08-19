@@ -48,19 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Bus_details extends ActionBarActivity implements OnMapReadyCallback,
-        View.OnClickListener, DirectionCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
-    private static final String TAG = "Bus_details";
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
-    double latSearch;
-    double lngSearch;
-    double latFirst;
-    double lngFirst;
-    private GoogleMap googleMap;
-    private String serverKey = "AIzaSyANztP01h4SRxFBJjiKLrxm5uWP1yCQr4E";
+public class Bus_details extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,22 +57,34 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_bus_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+        intentBusline();
 
+    }
+
+    private void intentBusline() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            latSearch = bundle.getDouble("latSearch");
-            lngSearch = bundle.getDouble("lngSearch");
-            latFirst = bundle.getDouble("latFirst");
-            lngFirst = bundle.getDouble("lngFirst");
-            requestDirection();
-        }
-        requestGoogleApiClient();
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            String Busnum = bundle.getString("รถประจำทางสาย");
+            String Sum = bundle.getString("ต้องผ่านทั้งหมด");
+            String StartEnd = bundle.getString("วิ่งจาก");
+            String KM = bundle.getString("อีก");
+            String StopFirst = bundle.getString("ป้ายรถประจำทางเริ่มต้น");
+            String StopEnd = bundle.getString("ป้ายรถประจำทางปลายทาง");
 
+
+            TextView tg1 = (TextView) findViewById(R.id.textView2);
+            TextView tg2 = (TextView) findViewById(R.id.textView3);
+            TextView tg3 = (TextView) findViewById(R.id.textView4);
+            TextView tg4 = (TextView) findViewById(R.id.textView5);
+            TextView tg5 = (TextView) findViewById(R.id.textView6);
+            TextView tg6 = (TextView) findViewById(R.id.textView7);
+            tg1.setText("รถประจำทางสาย " + Busnum);
+            tg2.setText("ต้องผ่านทั้งหมด " + Sum + " ป้าย");
+            tg3.setText("วิ่งจาก " + StartEnd);
+            tg4.setText("อีก " + KM);
+            tg5.setText("ป้ายรถประจำทางเริ่มต้น " + StopFirst);
+            tg6.setText("ป้ายรถประจำทางปลายทาง " + StopEnd);
+        }
     }
 
     @Override
@@ -93,222 +94,17 @@ public class Bus_details extends ActionBarActivity implements OnMapReadyCallback
         return true;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latFirst, lngFirst), 16));
-        //LatLng cc = new LatLng(13.777069, 100.511260);
-        //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cc, 16));
 
-    }
-
-    public void requestGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-    }
-
-    public void requestDirection() {
-        //LatLng origin = new LatLng(13.778512, 100.507915);
-        //LatLng destination = new LatLng(13.787855, 100.490267);
-        GoogleDirection.withServerKey(serverKey)
-                .from(new LatLng(latFirst, lngFirst))
-                .to(new LatLng(latSearch, lngSearch))
-                .alternativeRoute(true)
-                .language(Language.THAI)
-                .transportMode(TransportMode.TRANSIT)
-                .unit(Unit.METRIC)
-                .transitMode(TransitMode.BUS)
-                .execute(this);
-        //Toast.makeText(getApplicationContext(), "ตำแหน่งแรก" + latFirst + " " + lngFirst + "ตำแหน่งที่ค้นหา" + latSearch + " " + lngSearch, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDirectionSuccess(Direction direction, String rawBody) {
-        String status = direction.getStatus();
-        if (status.equals(RequestResult.OK)) {
-            Toast toast = Toast.makeText(this, "OK", Toast.LENGTH_LONG);
-            toast.show();
-
-
-            ArrayList<LatLng> sectionPositionList = direction.getRouteList().get(0).getLegList().get(0).getSectionPoint();
-            for (LatLng position : sectionPositionList) {
-                googleMap.addMarker(new MarkerOptions().position(position));
-            }
-
-            List<Step> stepList = direction.getRouteList().get(0).getLegList().get(0).getStepList();
-            ArrayList<PolylineOptions> polylineOptionList = DirectionConverter.createTransitPolyline(this, stepList, 5, Color.RED, 3, Color.BLUE);
-            for (PolylineOptions polylineOption : polylineOptionList) {
-                googleMap.addPolyline(polylineOption);
-            }
-
-            TextView tg1 = (TextView) findViewById(R.id.textView2);
-            TextView tg2 = (TextView) findViewById(R.id.textView3);
-            TextView tg3 = (TextView) findViewById(R.id.textView4);
-            TextView tg4 = (TextView) findViewById(R.id.textView5);
-            TextView tg5 = (TextView) findViewById(R.id.textView6);
-            TextView tg6 = (TextView) findViewById(R.id.textView7);
-            TextView tg7 = (TextView) findViewById(R.id.textView8);
-
-            /*แสดง สายรถประจำทาง String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getShortName();
-            แสดง จำนวนป้ายที่ผ่าน String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getStopNumber();
-            แสดง ชื่อป้ายต้นสาย-ปลายสาย String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getLine().getName();
-            แสดง กม. String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getDistance().getText();
-            แสดง ป้ายเริ่มต้น String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTransitDetail().getDepartureStopPoint().getName();*/
-
-            //tg7.setText(x7);
-            String z = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(0).getTravelMode();
-            String a = "WALKING";
-            boolean gg = z.equals(a);
-            int i = 0;
-            if (gg==true) {
-                i++;
-                String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getShortName();
-                String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getStopNumber();
-                String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getName();
-                String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getDistance().getText();
-                String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getDepartureStopPoint().getName();
-                String x6 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getArrivalStopPoint().getName();
-                tg1.setText("รถประจำทางสาย " + x1);
-                tg2.setText("ต้องผ่านทั้งหมด " + x2 + " ป้าย");
-                tg3.setText("วิ่งจาก " + x3);
-                tg4.setText("อีก " + x4);
-                tg5.setText("ป้ายรถประจำทางเริ่มต้น " +x5);
-                tg6.setText("ป้ายรถประจำทางปลายทาง "+x6);
-
-            }
-            else {
-                String x1 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getShortName();
-                String x2 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getStopNumber();
-                String x3 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getLine().getName();
-                String x4 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getDistance().getText();
-                String x5 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getDepartureStopPoint().getName();
-                String x6 = direction.getRouteList().get(0).getLegList().get(0).getStepList().get(i).getTransitDetail().getArrivalStopPoint().getName();
-                tg1.setText("รถประจำทางสาย " + x1);
-                tg2.setText("ต้องผ่านทั้งหมด " + x2 + " ป้าย");
-                tg3.setText("วิ่งจาก " + x3);
-                tg4.setText("อีก " + x4);
-                tg5.setText("ป้ายรถประจำทางเริ่มต้น " +x5);
-                tg6.setText("ป้ายรถประจำทางปลายทาง "+x6);
-
-            }
-
-
-        } else if (status.equals(RequestResult.NOT_FOUND)) {
-            Toast toast = Toast.makeText(this, "NOT_FOUND", Toast.LENGTH_LONG);
-            toast.show();
-        } else if (status.equals(RequestResult.ZERO_RESULTS)) {
-            Toast toast = Toast.makeText(this, "ไม่มีเส้นทาง", Toast.LENGTH_LONG);
-            toast.show();
-        } else if (status.equals(RequestResult.MAX_WAYPOINTS_EXCEEDED)) {
-            Toast toast = Toast.makeText(this, "MAX_WAYPOINTS_EXCEEDE", Toast.LENGTH_LONG);
-            toast.show();
-        } else if (status.equals(RequestResult.REQUEST_DENIED)) {
-            Toast toast = Toast.makeText(this, "REQUEST_DENIED", Toast.LENGTH_LONG);
-            toast.show();
-        } else if (status.equals(RequestResult.UNKNOWN_ERROR)) {
-            Toast toast = Toast.makeText(this, "UNKNOWN_ERROR", Toast.LENGTH_LONG);
-            toast.show();
-        }
-    }
-
-    @Override
-    public void onDirectionFailure(Throwable t) {
-        Toast toast = Toast.makeText(this, "No", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.button1) {
             finish();
         }
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-    }
-
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection suspended");
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i(TAG, "Connection failed: error code = " + connectionResult.getErrorCode());
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-        super.onStop();
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        double latStartADouble = location.getLatitude();
-        double lngStartADouble = location.getLongitude();
-        Toast.makeText(getApplicationContext(), "LatChang  "+latStartADouble +"\nlngChang "+lngStartADouble, Toast.LENGTH_SHORT).show();
-        Log.d("14JulV1", "GPS" + latStartADouble);
-        Log.d("14JulV1", "GPS" + lngStartADouble);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mGoogleApiClient.isConnected()) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, mLocationRequest, this);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(
-                    mGoogleApiClient, this);
-        }
     }
 }
+
+
+
+
+
 

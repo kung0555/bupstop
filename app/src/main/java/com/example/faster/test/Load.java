@@ -132,12 +132,14 @@ public class Load extends AppCompatActivity {
             for (int i = 0; i < objJSONArrayBUSROUTE.length(); i++) {
 
                 JSONObject objJSONBUSObject = objJSONArrayBUSROUTE.getJSONObject(i);
+                String strdirection = objJSONBUSObject .getString("direction");
                 String strbus = objJSONBUSObject.getString("bus");
+                String strbusdetails = objJSONBUSObject.getString("bus_details");
                 String strNamebusstop = objJSONBUSObject.getString("Namebusstop");
                 String strxX = objJSONBUSObject.getString("X");
                 String stryY = objJSONBUSObject.getString("Y");
                 busrouteTABLE objBusrouteTABLE = new busrouteTABLE(this);
-                long ValeBusroute = objBusrouteTABLE.addValueToBusroute(strbus,strNamebusstop,strxX,stryY);
+                long ValeBusroute = objBusrouteTABLE.addValueToBusroute(strdirection,strbus,strbusdetails,strNamebusstop,strxX,stryY);
 
             }   // for
 
@@ -249,8 +251,7 @@ public class Load extends AppCompatActivity {
                 String strX = objJSONObject.getString("X");
                 String strY = objJSONObject.getString("Y");
                 String strNamebusstop = objJSONObject.getString("Namebusstop");
-                String strbuspassing  = objJSONObject.getString("buspassing");
-                long insertVale = objBusstopTABLE.addValueToBusstop(strX, strY, strNamebusstop,strbuspassing);
+                long insertVale = objBusstopTABLE.addValueToBusstop(strX, strY, strNamebusstop);
             }
 
         } catch (Exception e) {
